@@ -1,0 +1,13 @@
+
+---
+
+### **2. `requirements.txt`**
+
+Este arquivo contém todas as dependências necessárias para o seu projeto funcionar corretamente. Ele deve ser atualizado com todas as bibliotecas que seu código utiliza.
+
+Se você estiver usando bibliotecas como `pandas` e talvez uma para validação de documentos (caso queira usar uma biblioteca externa como `validate-docbr`), elas devem ser listadas aqui.
+
+#### Exemplo de conteúdo para o `requirements.txt`:
+
+```txt
+pandas==1.5.3

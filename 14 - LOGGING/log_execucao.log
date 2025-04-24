@@ -1,0 +1,12 @@
+2024-10-17 20:21:54,162 - INFO - Iniciando o processo X
+2024-10-17 20:21:54,162 - INFO - Executando o passo 1
+2024-10-17 20:21:55,163 - INFO - Executando o passo 2
+2024-10-17 20:21:57,163 - INFO - Executando o passo 3
+2024-10-17 20:21:57,163 - ERROR - Erro ocorrido: Erro simulado no passo 3
+2024-10-17 20:21:57,171 - ERROR - Traceback (most recent call last):
+  File "c:\Users\ezequ\Scripts\02 - MEUS_PROJETOS\14_Logging\01_Função_Criação_log.py", line 26, in funcao_principal
+    raise ValueError("Erro simulado no passo 3")  # Simulação de erro
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Erro simulado no passo 3
+
+2024-10-17 20:21:57,172 - INFO - Processo finalizado em 3.01 segundos.
