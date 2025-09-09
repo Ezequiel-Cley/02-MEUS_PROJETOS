@@ -1,0 +1,94 @@
+Sugestão de Projeto: Análise de Dados de Acidentes de Trânsito no Brasil
+Este projeto aborda uma temática relevante e com dados públicos abundantes, permitindo a criação de um data lake robusto e um painel interativo.
+
+1. Obtenção dos Dados
+Fonte Principal: Os dados de acidentes de trânsito em rodovias federais são disponibilizados anualmente pela Polícia Rodoviária Federal (PRF). Eles geralmente podem ser encontrados no portal de dados abertos do governo brasileiro ou diretamente no site da PRF. Os dados são detalhados e incluem informações como data, hora, tipo de acidente, condições climáticas, localização (latitude/longitude), tipo de veículo, e gravidade das vítimas.
+
+Dados Complementares (Opcional, para enriquecimento):
+IBGE: Dados demográficos por município ou estado (população, densidade demográfica) para contextualizar a ocorrência dos acidentes.
+Agências Meteorológicas: Dados de clima por região para correlacionar com as condições dos acidentes.
+Mapas/Geolocalização: Dados de limites geográficos de estados/municípios para visualizações geoespaciais.
+
+2. Criação do Data Lake
+O data lake será o repositório central dos dados brutos e processados. Você pode simular um ambiente de data lake usando ferramentas e abordagens que imitem seu funcionamento.
+
+Ferramentas Sugeridas:
+Armazenamento: Use um sistema de arquivos local (como pastas organizadas no seu computador) para simular o armazenamento de um data lake. Para uma abordagem mais avançada, considere Google Cloud Storage (GCS) ou Amazon S3 (AWS) na camada gratuita (free tier) para um ambiente mais próximo do real, ou até mesmo um servidor FTP/SFTP se preferir algo mais "on-premises".
+
+Estrutura de Pastas:
+raw/: Para os dados brutos, exatamente como foram baixados (CSV, JSON).
+staging/: Para os dados após uma limpeza inicial e padronização.
+processed/: Para os dados já transformados e prontos para o consumo, talvez em formatos otimizados como Parquet.
+
+Etapas:
+Ingestão: Baixe os arquivos de dados da PRF (geralmente CSVs) e salve-os na pasta raw/.
+Processamento Inicial (Data Wrangling):
+Limpeza: Trate valores ausentes, remova duplicatas, corrija erros de digitação (ex: nomes de cidades ou estados).
+Padronização: Uniformize formatos de data e hora, converta unidades, padronize nomes de colunas.
+
+Enriquecimento (Opcional): Se estiver usando, junte dados do IBGE ou meteorológicos.
+Transformação para Staging: Salve os dados limpos na pasta staging/.
+
+3. Modelagem de Dados (Schema em Estrela)
+A modelagem em estrela é ideal para análise e BI, pois otimiza o desempenho das consultas.
+
+Ferramentas Sugeridas:
+Banco de Dados: PostgreSQL, MySQL, SQL Server Express, ou SQLite são boas opções gratuitas para criar o data warehouse.
+Linguagem de Programação: Python com Pandas para a manipulação e carga dos dados no banco de dados.
+
+Exemplo de Modelo Estrela:
+Tabela Fato: fato_acidentes
+id_acidente (chave primária)
+id_data (chave estrangeira da dimensão tempo)
+id_localizacao (chave estrangeira da dimensão localização)
+id_veiculo (chave estrangeira da dimensão veículo)
+id_condicao_climatica (chave estrangeira da dimensão clima)
+quantidade_veiculos_envolvidos
+quantidade_feridos_leves
+quantidade_feridos_graves
+quantidade_mortos
+custo_estimado_acidente (se disponível ou calculável)
+
+Tabelas Dimensão:
+dim_tempo:
+id_data (chave primária)
+data_completa
+ano
+mes
+nome_mes
+dia
+dia_semana
+hora
+turno (manhã, tarde, noite, madrugada)
+
+dim_localizacao:
+id_localizacao (chave primária)
+uf
+municipio
+br (número da rodovia)
+km (quilometragem)
+latitude
+longitude
+tipo_pista (simples, dupla, etc.)
+dim_veiculo:
+id_veiculo (chave primária)
+tipo_veiculo (carro, moto, caminhão, etc.)
+marca_modelo (se disponível)
+idade_veiculo (se disponível)
+estado_veiculo (danificado, recuperado, etc.)
+dim_condicao_climatica:
+id_condicao_climatica (chave primária)
+condicao_tempo (chuva, sol, neblina, etc.)
+temperatura (se disponível)
+visibilidade (boa, ruim)
+
+Criação do Banco de Dados e Carga (ETL):
+Crie as tabelas no seu banco de dados seguindo o modelo estrela.
+Use Python (Pandas e um conector SQL como psycopg2 para PostgreSQL ou sqlite3 para SQLite) para ler os dados da pasta processed/, transformar em dataframes e carregar nas tabelas de dimensão e fato.
+
+4. Criação do Cubo (Opcional, para demonstrar OLAP)
+Um cubo OLAP pré-agrega dados para consultas rápidas. Embora o Power BI crie seu próprio modelo tabular (que funciona como um cubo em muitos aspectos), você pode criar um cubo conceitual ou até mesmo usar uma ferramenta para demonstrar essa camada.
+
+Ferramentas Sugeridas (Opcional):
+Apache Druid, ClickHouse: Ferramentas OLAP de código aberto, mas podem ser complexas para configurar.
+Simulação via Views SQL: Crie views agregadas no seu banco de dados para simular as operações de um cubo (ex: view_acidentes_por_mes_uf, view_acidentes_por_tipo_veiculo). Estas views podem ser a fonte para o Power BI.
