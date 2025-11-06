@@ -27,27 +27,27 @@ conn = pyodbc.connect(connection_string)
 
 # Sua consulta SQL
 query = """SELECT 
-            CONVERT(DATE, TDA.DATA_INCLUSAO) AS DATA,
-            TDA.DEVEDOR_ID, TC.FANTASIA AS CONTRATANTE,
-            TDA.USUARIO_INCLUSAO AS OPERADOR,
+            CONVERT(DATE, TDA.DATA) AS DATA,
+            TDA.ID_CLIENTE, TC.EMPRESA AS CONTRATANTE,
+            TDA.USUARIO AS OPERADOR,
             TD.DESCRICAO,
-            case when TD.SE_DISCADOR = 's' then 1 else 0 end as 'TRABALHADO',
-            case when TD.SE_PRODUTIVO = 's' then 1 else 0 end as 'PRODUTIVO',
-            case when TD.SE_PRODUTIVO = 's' then 0 else 1 end as 'IMPRODUTIVO',
-            case when TD.SE_PROMESSA = 's' then 1 else 0 end as 'PROMESSA',]
+            case when TD.DISCADOR = 's' then 1 else 0 end as 'TRABALHADO',
+            case when TD.PRODUTIVO = 's' then 1 else 0 end as 'PRODUTIVO',
+            case when TD.PRODUTIVO = 's' then 0 else 1 end as 'IMPRODUTIVO',
+            case when TD.PROMESSA = 's' then 1 else 0 end as 'PROMESSA',]
             COLUNA_VALOR.VALOR_TOTAL 
-        FROM tbdevedor_acionamento TDA WITH(NOLOCK) 
-        INNER JOIN tbacao_cobranca TD WITH(NOLOCK) ON TD.ACAO_ID = TDA.ACAO_ID 
-        INNER JOIN tbcontratante TC WITH(NOLOCK) ON TC.CONTRATANTE_ID = TDA.CONT_ID 
+        FROM acionamento TDA WITH(NOLOCK) 
+        INNER JOIN acao TD WITH(NOLOCK) ON TD.ACAO_ID = TDA.ACAO_ID 
+        INNER JOIN contratante TC WITH(NOLOCK) ON TC.EMPRESA_ID = TDA.EMPRESA_ID 
         INNER JOIN ( SELECT T
-                        2.DEVEDOR_ID, 
+                        T2.ID_CLIENTE, 
                         SUM(T2.VALOR) VALOR_TOTAL 
-                        FROM tbtitulo T2 WITH(NOLOCK) 
-                        WHERE T2.CONT_ID IN ('192','93','200') 
-                        GROUP BY T2.DEVEDOR_ID) COLUNA_VALOR ON COLUNA_VALOR.DEVEDOR_ID = TDA.DEVEDOR_ID 
-        WHERE TDA.CONT_ID IN ('192','93','200') 
-        AND CAST(TDA.DATA_INCLUSAO AS DATE) = GETDATE()
-        AND DATEPART(HOUR, TDA.DATA_INCLUSAO) <=  DATEPART(HOUR, GETDATE())
+                        FROM FATURAS T2 WITH(NOLOCK) 
+                        WHERE T2.EMPRESA_ID IN ('192','93','200') 
+                        GROUP BY T2.ID_CLIENTE) COLUNA_VALOR ON COLUNA_VALOR.ID_CLIENTE = TDA.ID_CLIENTE 
+        WHERE TDA.EMPRESA_ID IN ('192','93','200') 
+        AND CAST(TDA.DATA AS DATE) = GETDATE()
+        AND DATEPART(HOUR, TDA.DATA) <=  DATEPART(HOUR, GETDATE())
         """
 
 # Executando a consulta e criando um DataFrame diretamente
@@ -62,7 +62,6 @@ dados['VALOR_PROMESSA'] = dados.apply(lambda row: dados.loc[row.name, 'VALOR_TOT
 
 # Criando uma nova coluna 'VALOR_IMPRODUTIVO' com base na condição 'IMPRODUTIVO' == 1
 dados['VALOR_IMPRODUTIVO'] = dados.apply(lambda row: dados.loc[row.name, 'VALOR_TOTAL'] if row['IMPRODUTIVO'] == 1 else 0, axis=1)
-
 
 # Realizado o Agrupamento da Minha Base para criação da minha Base
 Base_01 = dados.groupby(['CONTRATANTE','OPERADOR']).agg(

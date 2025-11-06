@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Link Publico para acesso a planilha com os dados do Forms
-url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQo-SmZSvyZj6UR7I0MofPqI5aG_GxWpH2PJV-UvSPI2tFOeT0SU-bVEFVFbgwt3bDKqf_2D2heBcnb/pub?output=csv'
+url = 'Inserir a URL do seu forms aqui'
 
 # Carregar respostas do formulário
 df = pd.read_csv(url)

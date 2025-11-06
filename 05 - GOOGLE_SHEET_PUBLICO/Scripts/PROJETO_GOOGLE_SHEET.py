@@ -2,7 +2,7 @@ import pandas as pd
 # Modulos do Plotly
 import plotly.express as px
 
-url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ14LQ4pSpjviMuQYs10wdo_i9M0SEL53MTLjEamFtc-SP82URGNHUbExhlmQCTHhCMwSTmsQGhsOKK/pubhtml'
+url = 'Inserir_site_para_extrair_html'
 df = pd.read_html(url, header =0, index_col=0, skiprows=1)[0].reset_index()
 
 df = df.iloc[:, :15]
